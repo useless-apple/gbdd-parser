@@ -1,4 +1,6 @@
 import json
+import pandas as pd
+
 import requests
 
 headers = {
@@ -24,8 +26,6 @@ text_08 = 'c {} по {}: {}\n\n Последняя операция - сняти
 text_11 = 'c {} по {}: {}\n\nПоследняя операция - первичная регистрация'
 text_15 = 'c {} по {}: {}\n\nПоследняя операция - регистрация ТС, ввезенных из-за пределов Российской Федерации'
 text_16 = 'c {} по {}: {}\n\nПоследняя операция - регистрация ТС, прибывших из других регионов Российской Федерации'
-
-
 
 result = []
 
@@ -90,6 +90,7 @@ def get_data_text(r):
 
 with open('vins.txt') as VINs:
     for index, vin in enumerate(VINs):
+        print(vin)
         vin = vin.strip()
         data = {
             'vin': vin,
@@ -106,5 +107,8 @@ with open('vins.txt') as VINs:
         else:
             print(r.status_code)
     print(result)
-    with open('vin.json', 'w', encoding='utf-8') as f:
-        json.dump(result, f, ensure_ascii=False, indent=4)
+    if len(result):
+        with open('vin.json', 'w', encoding='utf-8') as f:
+            json.dump(result, f, ensure_ascii=False, indent=4)
+        df_json = pd.read_json('vin.json')
+        df_json.to_excel('data.xlsx')
